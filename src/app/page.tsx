@@ -1,65 +1,266 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import Header from '@/components/Header';
+import TabNavigation from '@/components/TabNavigation';
+import CategoryFilter from '@/components/CategoryFilter';
+import AIRecommendSection from '@/components/AIRecommendSection';
+import MissionList from '@/components/MissionList';
+import MissionDetail from '@/components/MissionDetail';
+import OnboardingPreference from '@/components/OnboardingPreference';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { 
+  getCurrentUser, 
+  getTabs, 
+  getCategories, 
+  getAIRecommendedMissions, 
+  getAllMissions,
+  toggleMissionLike,
+  participateMission 
+} from '@/services/missionService';
+import { Mission, Category, TabItem, User, CategoryType, SortType } from '@/types/mission';
 
 export default function Home() {
+  // 온보딩 상태
+  const { isOnboardingComplete, completeOnboarding, skipOnboarding } = useOnboarding();
+
+  // 상태 관리
+  const [user, setUser] = useState<User | null>(null);
+  const [tabs, setTabs] = useState<TabItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('전체');
+  const [aiMissions, setAiMissions] = useState<Mission[]>([]);
+  const [allMissions, setAllMissions] = useState<Mission[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
+
+  // 초기 데이터 로드
+  useEffect(() => {
+    // 온보딩 완료 여부가 결정되기 전에는 로드하지 않음
+    if (isOnboardingComplete === null) return;
+    // 온보딩이 완료되지 않았으면 로드하지 않음
+    if (!isOnboardingComplete) {
+      setIsLoading(false);
+      return;
+    }
+
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        
+        const [userData, tabsData, categoriesData] = await Promise.all([
+          getCurrentUser(),
+          getTabs(),
+          getCategories(),
+        ]);
+        
+        setUser(userData);
+        setTabs(tabsData);
+        setCategories(categoriesData);
+        
+        // 사용자 정보가 있으면 미션 데이터 로드
+        if (userData) {
+          const [aiMissionsData, allMissionsData] = await Promise.all([
+            getAIRecommendedMissions(userData.id),
+            getAllMissions(),
+          ]);
+          
+          setAiMissions(aiMissionsData);
+          setAllMissions(allMissionsData);
+        }
+      } catch (error) {
+        console.error('데이터 로드 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [isOnboardingComplete]);
+
+  // 카테고리 변경 핸들러
+  const handleCategoryChange = async (category: CategoryType) => {
+    setSelectedCategory(category);
+    
+    try {
+      const missions = await getAllMissions(category);
+      setAllMissions(missions);
+    } catch (error) {
+      console.error('미션 목록 로드 실패:', error);
+    }
+  };
+
+  // 정렬 변경 핸들러
+  const handleSortChange = async (sort: SortType) => {
+    try {
+      const missions = await getAllMissions(selectedCategory, sort);
+      setAllMissions(missions);
+    } catch (error) {
+      console.error('미션 목록 정렬 실패:', error);
+    }
+  };
+
+  // 좋아요 토글 핸들러
+  const handleLikeClick = async (missionId: string) => {
+    try {
+      await toggleMissionLike(missionId);
+      
+      // AI 추천 미션 업데이트
+      setAiMissions(prev => 
+        prev.map(m => 
+          m.id === missionId ? { ...m, isLiked: !m.isLiked } : m
+        )
+      );
+      
+      // 전체 미션 업데이트
+      setAllMissions(prev => 
+        prev.map(m => 
+          m.id === missionId ? { ...m, isLiked: !m.isLiked } : m
+        )
+      );
+
+      // 선택된 미션도 업데이트
+      if (selectedMission?.id === missionId) {
+        setSelectedMission(prev => prev ? { ...prev, isLiked: !prev.isLiked } : null);
+      }
+    } catch (error) {
+      console.error('좋아요 토글 실패:', error);
+    }
+  };
+
+  // 미션 클릭 핸들러 (상세 페이지로 이동)
+  const handleMissionClick = (mission: Mission) => {
+    setSelectedMission(mission);
+  };
+
+  // 뒤로가기 핸들러
+  const handleBack = () => {
+    setSelectedMission(null);
+  };
+
+  // 미션 참여 핸들러
+  const handleParticipateClick = async (missionId: string) => {
+    try {
+      const result = await participateMission(missionId);
+      if (result.success) {
+        alert(result.message);
+        setSelectedMission(null); // 참여 후 목록으로 돌아가기
+      }
+    } catch (error) {
+      console.error('미션 참여 실패:', error);
+    }
+  };
+
+  // 온보딩 완료 핸들러
+  const handleOnboardingComplete = (selectedCategories: string[]) => {
+    completeOnboarding(selectedCategories);
+  };
+
+  // 온보딩 스킵 핸들러
+  const handleOnboardingSkip = () => {
+    skipOnboarding();
+  };
+
+  // 온보딩 상태 확인 중
+  if (isOnboardingComplete === null) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative w-16 h-16 mx-auto mb-4">
+            <div className="w-16 h-16 border-4 border-coral-200 rounded-full"></div>
+            <div className="absolute top-0 left-0 w-16 h-16 border-4 border-coral-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 온보딩 화면
+  if (!isOnboardingComplete) {
+    return (
+      <OnboardingPreference 
+        onComplete={handleOnboardingComplete}
+        onSkip={handleOnboardingSkip}
+      />
+    );
+  }
+
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative w-16 h-16 mx-auto mb-4">
+            <div className="w-16 h-16 border-4 border-coral-200 rounded-full"></div>
+            <div className="absolute top-0 left-0 w-16 h-16 border-4 border-coral-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-500 font-medium">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl">😢</span>
+          </div>
+          <p className="text-gray-600 font-medium">사용자 정보를 불러올 수 없습니다.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 미션 상세 페이지가 선택된 경우
+  if (selectedMission) {
+    return (
+      <MissionDetail
+        mission={selectedMission}
+        onBack={handleBack}
+        onLikeClick={handleLikeClick}
+        onParticipate={handleParticipateClick}
+      />
+    );
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="min-h-screen bg-gray-50 overscroll-bounce">
+      {/* 헤더 */}
+      <Header user={user} />
+      
+      {/* 탭 네비게이션 */}
+      <TabNavigation tabs={tabs} />
+      
+      {/* 카테고리 필터 */}
+      <CategoryFilter 
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onCategoryChange={handleCategoryChange}
+      />
+      
+      {/* AI 추천 미션 섹션 */}
+      <AIRecommendSection 
+        user={user}
+        missions={aiMissions}
+        onLikeClick={handleLikeClick}
+        onMissionClick={handleMissionClick}
+      />
+      
+      {/* 구분선 */}
+      <div className="h-3 bg-gradient-to-b from-gray-100 to-gray-50" />
+      
+      {/* 미션 리스트 (세로 스크롤) */}
+      <MissionList 
+        missions={allMissions}
+        onLikeClick={handleLikeClick}
+        onMissionClick={handleMissionClick}
+        onSortChange={handleSortChange}
+      />
+      
+      {/* 하단 여백 */}
+      <div className="h-8 bg-gray-100" />
     </div>
   );
 }
