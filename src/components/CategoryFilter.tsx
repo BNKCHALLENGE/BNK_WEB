@@ -8,6 +8,17 @@ interface CategoryFilterProps {
   onCategoryChange: (category: CategoryType) => void;
 }
 
+// 카테고리 이름을 소문자로 변환
+const normalizeCategoryName = (name: string): CategoryType => {
+  return name.toLowerCase() as CategoryType;
+};
+
+// 카테고리 한글 레이블 가져오기
+const getCategoryLabel = (name: string): string => {
+  const normalized = normalizeCategoryName(name);
+  return CategoryLabels[normalized] || name;
+};
+
 export default function CategoryFilter({ 
   categories, 
   selectedCategory, 
@@ -19,13 +30,14 @@ export default function CategoryFilter({
       
       <div className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-1 -mx-4 px-4">
         {categories.map((category) => {
-          const isSelected = selectedCategory === category.name;
-          const label = CategoryLabels[category.name] || category.name;
+          const normalizedName = normalizeCategoryName(category.name);
+          const isSelected = normalizeCategoryName(selectedCategory) === normalizedName;
+          const label = getCategoryLabel(category.name);
           
           return (
             <button
               key={category.id}
-              onClick={() => onCategoryChange(category.name)}
+              onClick={() => onCategoryChange(normalizedName)}
               className={`
                 flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-semibold transition-all active:scale-95
                 ${isSelected 

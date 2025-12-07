@@ -247,6 +247,21 @@ export default function Home() {
       return;
     }
 
+    // 이미 추적 중인 미션이 있는지 확인
+    if (trackingMission) {
+      alert(`이미 "${trackingMission.title}" 미션을 진행 중입니다.\n먼저 현재 미션을 완료하거나 취소해주세요.`);
+      return;
+    }
+
+    // 진행 중인 미션이 있는지 확인
+    if (inProgressMissions.length > 0) {
+      const inProgressMission = inProgressMissions[0];
+      const confirmSwitch = confirm(
+        `이미 "${inProgressMission.title}" 미션을 진행 중입니다.\n새 미션으로 변경하시겠습니까?`
+      );
+      if (!confirmSwitch) return;
+    }
+
     try {
       // 먼저 API로 미션 참여 등록
       const result = await participateMission(missionId);
@@ -263,7 +278,12 @@ export default function Home() {
         const inProgressData = await getInProgressMissions();
         setInProgressMissions(inProgressData);
       } else {
-        alert(result.message);
+        // 에러 메시지 한글화
+        let message = result.message;
+        if (message.includes('Already participating')) {
+          message = '이미 다른 미션을 진행 중입니다. 진행 중인 미션을 먼저 완료해주세요.';
+        }
+        alert(message);
       }
     } catch (error) {
       console.error('미션 참여 실패:', error);

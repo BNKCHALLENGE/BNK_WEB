@@ -1,20 +1,11 @@
 'use client';
 
+import Image from 'next/image';
+
 interface CoinCardProps {
   coinBalance: number;
   onViewHistory?: () => void;
 }
-
-// 코인 아이콘
-const CoinStackIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <rect x="2" y="4" width="5" height="4" rx="1" fill="#FCD34D" stroke="#F59E0B" />
-    <rect x="5" y="6" width="5" height="4" rx="1" fill="#FCD34D" stroke="#F59E0B" />
-    <rect x="8" y="4" width="5" height="4" rx="1" fill="#FCD34D" stroke="#F59E0B" />
-    <rect x="11" y="6" width="5" height="4" rx="1" fill="#FCD34D" stroke="#F59E0B" />
-    <rect x="14" y="4" width="5" height="4" rx="1" fill="#FCD34D" stroke="#F59E0B" />
-  </svg>
-);
 
 // 카드 아이콘
 const CardPayIcon = () => (
@@ -39,7 +30,13 @@ export default function CoinCard({ coinBalance, onViewHistory }: CoinCardProps) 
         {/* 상단 */}
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
-            <CoinStackIcon />
+            <Image 
+              src="/db.png" 
+              alt="동백코인" 
+              width={28} 
+              height={28}
+              className="object-contain"
+            />
             <span className="text-sm text-white/90">총 보유 동백스테이블코인</span>
           </div>
           <button className="text-white/80 hover:text-white transition-colors">
@@ -69,4 +66,3 @@ export default function CoinCard({ coinBalance, onViewHistory }: CoinCardProps) 
     </div>
   );
 }
-
