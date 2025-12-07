@@ -1,7 +1,7 @@
 'use client';
 
-import { Mission } from '@/types/mission';
-import Image from 'next/image';
+import { Mission, CategoryLabels } from '@/types/mission';
+import KakaoMap from './KakaoMap';
 
 interface MissionDetailProps {
   mission: Mission;
@@ -75,6 +75,7 @@ export default function MissionDetail({
   onParticipate 
 }: MissionDetailProps) {
   const dDay = mission.endDate ? calculateDDay(mission.endDate) : '';
+  const categoryLabel = CategoryLabels[mission.category] || mission.category;
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -115,30 +116,20 @@ export default function MissionDetail({
           </div>
         </div>
 
-        {/* 지도 영역 */}
+        {/* 지도 영역 - 카카오맵 */}
         <div className="px-4 mb-6">
           <div className="relative w-full h-48 rounded-2xl overflow-hidden bg-gray-100 shadow-inner">
-            <Image
-              src={`https://maps.googleapis.com/maps/api/staticmap?center=${mission.coordinates?.lat || 35.1531},${mission.coordinates?.lng || 129.1186}&zoom=14&size=600x300&maptype=roadmap&key=YOUR_API_KEY`}
-              alt="지도"
-              fill
-              className="object-cover opacity-80"
-              unoptimized
-              onError={(e) => {
-                // 지도 로드 실패 시 대체 이미지
-                e.currentTarget.src = 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&h=300&fit=crop';
-              }}
-            />
-            {/* 지도 대체 오버레이 */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/20" />
-            
-            {/* 마커 표시 */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full">
-              <div className="w-8 h-8 bg-coral-500 rounded-full flex items-center justify-center shadow-lg">
-                <div className="w-3 h-3 bg-white rounded-full" />
+            {mission.coordinates ? (
+              <KakaoMap 
+                lat={mission.coordinates.lat} 
+                lng={mission.coordinates.lng}
+                title={mission.locationDetail || mission.location}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                <span>위치 정보가 없습니다</span>
               </div>
-              <div className="w-2 h-2 bg-coral-500 rounded-full mx-auto -mt-1" />
-            </div>
+            )}
           </div>
         </div>
 
@@ -182,6 +173,16 @@ export default function MissionDetail({
                 </div>
               </div>
             )}
+
+            <div className="flex items-center gap-3">
+              <div className="w-[18px] h-[18px] flex items-center justify-center">
+                <span className="text-sm">🏷️</span>
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-500 mr-3">카테고리</span>
+                <span className="text-sm text-gray-900">{categoryLabel}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -218,4 +219,3 @@ export default function MissionDetail({
     </div>
   );
 }
-

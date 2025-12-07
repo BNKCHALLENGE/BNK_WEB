@@ -1,6 +1,6 @@
 'use client';
 
-import { Category, CategoryType } from '@/types/mission';
+import { Category, CategoryType, CategoryLabels } from '@/types/mission';
 
 interface CategoryFilterProps {
   categories: Category[];
@@ -20,6 +20,7 @@ export default function CategoryFilter({
       <div className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-1 -mx-4 px-4">
         {categories.map((category) => {
           const isSelected = selectedCategory === category.name;
+          const label = CategoryLabels[category.name] || category.name;
           
           return (
             <button
@@ -33,7 +34,7 @@ export default function CategoryFilter({
                 }
               `}
             >
-              {category.name}
+              {label}
             </button>
           );
         })}

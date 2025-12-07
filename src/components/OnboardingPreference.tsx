@@ -1,36 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-
-interface PreferenceCategory {
-  id: string;
-  emoji: string;
-  label: string;
-}
+import { OnboardingCategories, CategoryType } from '@/types/mission';
 
 interface OnboardingPreferenceProps {
-  onComplete: (selectedCategories: string[]) => void;
+  onComplete: (selectedCategories: CategoryType[]) => void;
   onSkip: () => void;
 }
-
-const categories: PreferenceCategory[] = [
-  { id: 'food', emoji: '🍳', label: '맛집' },
-  { id: 'cafe', emoji: '☕', label: '카페' },
-  { id: 'tour', emoji: '🏖️', label: '관광' },
-  { id: 'festival', emoji: '🎊', label: '축제' },
-  { id: 'study', emoji: '📚', label: '공부' },
-  { id: 'exercise', emoji: '🏃', label: '운동' },
-  { id: 'exhibition', emoji: '🎨', label: '전시' },
-  { id: 'sports', emoji: '⚾', label: '스포츠' },
-  { id: 'volunteer', emoji: '♻️', label: '봉사' },
-];
 
 const MIN_SELECTION = 3;
 
 export default function OnboardingPreference({ onComplete, onSkip }: OnboardingPreferenceProps) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<CategoryType[]>([]);
 
-  const toggleCategory = (id: string) => {
+  const toggleCategory = (id: CategoryType) => {
     setSelectedIds(prev => 
       prev.includes(id) 
         ? prev.filter(item => item !== id)
@@ -86,7 +69,7 @@ export default function OnboardingPreference({ onComplete, onSkip }: OnboardingP
 
         {/* 카테고리 그리드 */}
         <div className="grid grid-cols-3 gap-3 mb-8">
-          {categories.map((category) => {
+          {OnboardingCategories.map((category) => {
             const isSelected = selectedIds.includes(category.id);
             
             return (
@@ -155,4 +138,3 @@ export default function OnboardingPreference({ onComplete, onSkip }: OnboardingP
     </div>
   );
 }
-

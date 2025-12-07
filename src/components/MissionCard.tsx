@@ -1,6 +1,6 @@
 'use client';
 
-import { Mission } from '@/types/mission';
+import { Mission, CategoryLabels } from '@/types/mission';
 import Image from 'next/image';
 
 interface MissionCardProps {
@@ -42,6 +42,8 @@ export default function MissionCard({
     e.stopPropagation();
     onLikeClick?.(mission.id);
   };
+
+  const categoryLabel = CategoryLabels[mission.category] || mission.category;
   
   if (variant === 'horizontal') {
     // 가로형 카드 (세로 스크롤 미션 리스트용)
@@ -73,7 +75,7 @@ export default function MissionCard({
           {/* 카테고리 뱃지 */}
           <div className="absolute top-3 left-3">
             <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-gray-700 shadow-sm">
-              {mission.category}
+              {categoryLabel}
             </span>
           </div>
           

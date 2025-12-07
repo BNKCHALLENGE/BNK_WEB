@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Mission, SortType } from '@/types/mission';
+import { Mission, SortType, SortLabels } from '@/types/mission';
 import MissionCard from './MissionCard';
 
 interface MissionListProps {
@@ -24,10 +24,10 @@ export default function MissionList({
   onMissionClick,
   onSortChange 
 }: MissionListProps) {
-  const [selectedSort, setSelectedSort] = useState<SortType>('거리순');
+  const [selectedSort, setSelectedSort] = useState<SortType>('distance');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
-  const sortOptions: SortType[] = ['거리순', '인기순', '최신순'];
+  const sortOptions: SortType[] = ['distance', 'popular', 'recent'];
   
   const handleSortChange = (sort: SortType) => {
     setSelectedSort(sort);
@@ -44,7 +44,7 @@ export default function MissionList({
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-1.5 px-4 py-2 bg-white rounded-full border border-gray-200 text-sm text-gray-700 hover:border-gray-300 hover:shadow-sm transition-all"
           >
-            {selectedSort}
+            {SortLabels[selectedSort]}
             <ChevronDownIcon />
           </button>
           
@@ -68,7 +68,7 @@ export default function MissionList({
                       }
                     `}
                   >
-                    {option}
+                    {SortLabels[option]}
                   </button>
                 ))}
               </div>
