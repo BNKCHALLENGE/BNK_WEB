@@ -12,21 +12,32 @@ import {
 // API 베이스 URL
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://bnk-api.up.railway.app/v1';
 
+// 기본 위치 (부산)
+const DEFAULT_LAT = 35.1796;
+const DEFAULT_LON = 129.0756;
+
 // 인증 헤더
 const getAuthHeaders = () => ({
   'Authorization': 'Bearer user-1',
   'Content-Type': 'application/json',
 });
 
-// API 응답 타입
-interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-  error?: {
-    code: string;
-    message: string;
-  };
+// API 응답에서 안전하게 배열 추출
+function extractArray<T>(data: unknown): T[] {
+  if (Array.isArray(data)) {
+    return data;
+  }
+  if (data && typeof data === 'object') {
+    // { missions: [...] } 형태 처리
+    const obj = data as Record<string, unknown>;
+    if (Array.isArray(obj.missions)) {
+      return obj.missions as T[];
+    }
+    if (Array.isArray(obj.data)) {
+      return obj.data as T[];
+    }
+  }
+  return [];
 }
 
 // 현재 사용자 정보 조회
@@ -38,8 +49,15 @@ export async function getCurrentUser(): Promise<User> {
     
     if (!response.ok) throw new Error('Failed to fetch user');
     
-    const result: ApiResponse<User> = await response.json();
-    return result.data;
+    const result = await response.json();
+    // result.data 또는 result 자체가 user일 수 있음
+    const userData = result.data || result;
+    
+    return {
+      ...mockUser,
+      ...userData,
+      coinBalance: userData.coinBalance ?? mockUser.coinBalance,
+    };
   } catch (error) {
     console.warn('API 호출 실패, 더미 데이터 사용:', error);
     return mockUser;
@@ -55,8 +73,10 @@ export async function getTabs(): Promise<TabItem[]> {
     
     if (!response.ok) throw new Error('Failed to fetch tabs');
     
-    const result: ApiResponse<TabItem[]> = await response.json();
-    return result.data;
+    const result = await response.json();
+    const tabs = extractArray<TabItem>(result.data || result);
+    
+    return tabs.length > 0 ? tabs : mockTabs;
   } catch (error) {
     console.warn('API 호출 실패, 더미 데이터 사용:', error);
     return mockTabs;
@@ -72,8 +92,21 @@ export async function getCategories(): Promise<Category[]> {
     
     if (!response.ok) throw new Error('Failed to fetch categories');
     
-    const result: ApiResponse<Category[]> = await response.json();
-    return result.data;
+    const result = await response.json();
+    const categories = extractArray<Category>(result.data || result);
+    
+    // 카테고리가 없거나 배열이 아니면 더미 사용
+    if (categories.length === 0) {
+      return mockCategories;
+    }
+    
+    // 'all' 카테고리가 없으면 추가
+    const hasAll = categories.some(c => c.name === 'all' || c.id === 'all');
+    if (!hasAll) {
+      return [{ id: 'cat-all', name: 'all', isActive: true }, ...categories];
+    }
+    
+    return categories;
   } catch (error) {
     console.warn('API 호출 실패, 더미 데이터 사용:', error);
     return mockCategories;
@@ -83,9 +116,10 @@ export async function getCategories(): Promise<Category[]> {
 // AI 추천 미션 목록 조회
 export async function getAIRecommendedMissions(lat?: number, lon?: number, limit?: number): Promise<Mission[]> {
   try {
+    // lat, lon이 없으면 기본값 사용 (API가 필수로 요구)
     const params = new URLSearchParams();
-    if (lat) params.append('lat', lat.toString());
-    if (lon) params.append('lon', lon.toString());
+    params.append('lat', (lat ?? DEFAULT_LAT).toString());
+    params.append('lon', (lon ?? DEFAULT_LON).toString());
     if (limit) params.append('limit', limit.toString());
     
     const response = await fetch(`${API_BASE_URL}/missions/ai-recommend?${params.toString()}`, {
@@ -94,8 +128,10 @@ export async function getAIRecommendedMissions(lat?: number, lon?: number, limit
     
     if (!response.ok) throw new Error('Failed to fetch AI recommended missions');
     
-    const result: ApiResponse<Mission[]> = await response.json();
-    return result.data;
+    const result = await response.json();
+    const missions = extractArray<Mission>(result.data || result);
+    
+    return missions.length > 0 ? missions : mockAIRecommendedMissions;
   } catch (error) {
     console.warn('API 호출 실패, 더미 데이터 사용:', error);
     return mockAIRecommendedMissions;
@@ -122,8 +158,10 @@ export async function getAllMissions(
     
     if (!response.ok) throw new Error('Failed to fetch missions');
     
-    const result: ApiResponse<{ missions: Mission[] }> = await response.json();
-    return result.data.missions || result.data as unknown as Mission[];
+    const result = await response.json();
+    const missions = extractArray<Mission>(result.data || result);
+    
+    return missions.length > 0 ? missions : mockAllMissions;
   } catch (error) {
     console.warn('API 호출 실패, 더미 데이터 사용:', error);
     
@@ -152,8 +190,10 @@ export async function getInProgressMissions(): Promise<Mission[]> {
     
     if (!response.ok) throw new Error('Failed to fetch in-progress missions');
     
-    const result: ApiResponse<Mission[]> = await response.json();
-    return result.data;
+    const result = await response.json();
+    const missions = extractArray<Mission>(result.data || result);
+    
+    return missions;
   } catch (error) {
     console.warn('API 호출 실패, 더미 데이터 사용:', error);
     return mockInProgressMissions;
@@ -169,8 +209,8 @@ export async function getMissionDetail(missionId: string): Promise<Mission | nul
     
     if (!response.ok) throw new Error('Failed to fetch mission detail');
     
-    const result: ApiResponse<Mission> = await response.json();
-    return result.data;
+    const result = await response.json();
+    return result.data || result;
   } catch (error) {
     console.warn('API 호출 실패, 더미 데이터 사용:', error);
     return mockAllMissions.find(m => m.id === missionId) || 
@@ -189,8 +229,8 @@ export async function toggleMissionLike(missionId: string): Promise<{ isLiked: b
     
     if (!response.ok) throw new Error('Failed to toggle like');
     
-    const result: ApiResponse<{ isLiked: boolean; likeCount: number }> = await response.json();
-    return result.data;
+    const result = await response.json();
+    return result.data || { isLiked: true, likeCount: 0 };
   } catch (error) {
     console.warn('API 호출 실패:', error);
     return { isLiked: true, likeCount: 0 };
@@ -213,11 +253,12 @@ export async function participateMission(missionId: string): Promise<{ success: 
       };
     }
     
-    const result: ApiResponse<{ participationId: string; status: string; startedAt: string }> = await response.json();
+    const result = await response.json();
+    const data = result.data || result;
     return { 
       success: true, 
       message: '미션 참여가 완료되었습니다!',
-      participationId: result.data.participationId
+      participationId: data.participationId
     };
   } catch (error) {
     console.warn('API 호출 실패:', error);
@@ -239,11 +280,12 @@ export async function completeMission(missionId: string, success: boolean): Prom
     
     if (!response.ok) throw new Error('Failed to complete mission');
     
-    const result: ApiResponse<{ missionId: string; userId: string; status: string; reward: number; coinBalance: number }> = await response.json();
+    const result = await response.json();
+    const data = result.data || result;
     return { 
       success: true, 
-      reward: result.data.reward,
-      coinBalance: result.data.coinBalance
+      reward: data.reward,
+      coinBalance: data.coinBalance
     };
   } catch (error) {
     console.warn('API 호출 실패:', error);
@@ -278,8 +320,8 @@ export async function getUserPreferences(): Promise<{ categories: CategoryType[]
     
     if (!response.ok) throw new Error('Failed to get preferences');
     
-    const result: ApiResponse<{ categories: CategoryType[]; isOnboardingComplete: boolean }> = await response.json();
-    return result.data;
+    const result = await response.json();
+    return result.data || { categories: [], isOnboardingComplete: false };
   } catch (error) {
     console.warn('API 호출 실패:', error);
     return { categories: [], isOnboardingComplete: false };
