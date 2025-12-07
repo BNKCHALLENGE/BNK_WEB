@@ -86,7 +86,14 @@ export default function Home() {
         ]);
         
         setUser(userData);
-        setTabs(tabsData);
+        
+        // 초기 탭 상태 설정 - 홈(tab-1)을 활성화
+        const initialTabs = tabsData.map(tab => ({
+          ...tab,
+          isActive: tab.id === 'tab-1' // 홈 탭 활성화
+        }));
+        setTabs(initialTabs);
+        setActiveTab('tab-1');
       } catch (error) {
         console.error('데이터 로드 실패:', error);
       } finally {

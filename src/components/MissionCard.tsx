@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Mission, CategoryLabels } from '@/types/mission';
 import Image from 'next/image';
 
@@ -10,6 +11,9 @@ interface MissionCardProps {
   onCardClick?: () => void;
   showParticipateButton?: boolean;
 }
+
+// 폴백 이미지 URL
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop';
 
 // 하트 아이콘
 const HeartIcon = ({ filled }: { filled?: boolean }) => (
@@ -30,6 +34,14 @@ const CoinIcon = () => (
   <span className="text-xs">🪙</span>
 );
 
+// 이미지 URL 유효성 검사
+const getValidImageUrl = (url: string): string => {
+  if (!url || url.includes('example.com') || !url.startsWith('http')) {
+    return FALLBACK_IMAGE;
+  }
+  return url;
+};
+
 export default function MissionCard({ 
   mission, 
   variant = 'vertical',
@@ -37,13 +49,19 @@ export default function MissionCard({
   onCardClick,
   showParticipateButton = false
 }: MissionCardProps) {
+  const [imageError, setImageError] = useState(false);
   
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onLikeClick?.(mission.id);
   };
 
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   const categoryLabel = CategoryLabels[mission.category] || mission.category;
+  const imageUrl = imageError ? FALLBACK_IMAGE : getValidImageUrl(mission.imageUrl);
   
   if (variant === 'horizontal') {
     // 가로형 카드 (세로 스크롤 미션 리스트용)
@@ -52,13 +70,15 @@ export default function MissionCard({
         onClick={onCardClick}
         className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group border border-gray-100"
       >
-        <div className="relative w-full h-44 overflow-hidden">
+        <div className="relative w-full h-44 overflow-hidden bg-gray-200">
           <Image
-            src={mission.imageUrl}
+            src={imageUrl}
             alt={mission.title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 768px) 100vw, 50vw"
+            onError={handleImageError}
+            unoptimized={imageUrl.includes('example.com')}
           />
           
           {/* 그라데이션 오버레이 */}
@@ -122,13 +142,15 @@ export default function MissionCard({
       onClick={onCardClick}
       className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group border border-gray-100 h-full flex flex-col"
     >
-      <div className="relative w-full h-28 overflow-hidden flex-shrink-0">
+      <div className="relative w-full h-28 overflow-hidden flex-shrink-0 bg-gray-200">
         <Image
-          src={mission.imageUrl}
+          src={imageUrl}
           alt={mission.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 768px) 50vw, 33vw"
+          onError={handleImageError}
+          unoptimized={imageUrl.includes('example.com')}
         />
         
         {/* 그라데이션 오버레이 */}
