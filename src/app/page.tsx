@@ -463,13 +463,6 @@ export default function Home() {
             onMissionClick={handleMissionClick}
           />
 
-          {/* 카테고리 필터 */}
-          <CategoryFilter
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategoryChange={handleCategoryChange}
-          />
-
           {/* AI 추천 미션 섹션 */}
           <AIRecommendSection
             user={user}
@@ -478,8 +471,12 @@ export default function Home() {
             onMissionClick={handleMissionClick}
           />
 
-          {/* 구분선 */}
-          <div className="h-3 bg-gradient-to-b from-gray-100 to-gray-50" />
+          {/* 카테고리 필터 */}
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
+          />
 
           {/* 미션 리스트 (세로 스크롤) */}
           <MissionList
