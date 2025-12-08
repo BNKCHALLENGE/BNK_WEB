@@ -76,7 +76,7 @@ export function useMissionTracking(
         mission.id,
         mission.coordinates.lat,
         mission.coordinates.lng,
-        60000 // 1분
+        5000 // 5초
       );
     } else {
       // 웹 브라우저 환경 - 시뮬레이션 (테스트용)
@@ -101,7 +101,7 @@ export function useMissionTracking(
 // 웹 브라우저용 시뮬레이션 (테스트용)
 function simulateWebTracking(mission: Mission) {
   let timeInZone = 0;
-  const requiredDuration = 60000;
+  const requiredDuration = 5000; // 5초
 
   const interval = setInterval(() => {
     timeInZone += 1000;
@@ -117,7 +117,7 @@ function simulateWebTracking(mission: Mission) {
     });
     window.dispatchEvent(event);
 
-    // 1분 후 완료
+    // 5초 후 완료
     if (timeInZone >= requiredDuration) {
       clearInterval(interval);
       
@@ -144,7 +144,7 @@ export function calculateProgressPercent(progress: MissionProgress | null): numb
 
 // 남은 시간 포맷팅 헬퍼
 export function formatRemainingTime(progress: MissionProgress | null): string {
-  if (!progress) return '1:00';
+  if (!progress) return '0:05';
   const remaining = Math.max(progress.requiredDuration - progress.timeInZone, 0);
   const seconds = Math.ceil(remaining / 1000);
   const mins = Math.floor(seconds / 60);

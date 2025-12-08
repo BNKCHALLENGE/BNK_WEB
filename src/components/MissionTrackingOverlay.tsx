@@ -59,7 +59,7 @@ export default function MissionTrackingOverlay({
                 </svg>
               </div>
               <p className="text-green-600 font-semibold mb-1">목표 위치 도착!</p>
-              <p className="text-sm text-gray-500">해당 위치에서 1분간 대기해주세요</p>
+              <p className="text-sm text-gray-500">해당 위치에서 5초간 대기해주세요</p>
             </>
           ) : (
             <>
@@ -99,7 +99,7 @@ export default function MissionTrackingOverlay({
         {/* 안내 메시지 */}
         <div className="bg-blue-50 rounded-xl p-4 mb-6">
           <p className="text-sm text-blue-700">
-            💡 목표 위치 100m 이내에서 1분간 머물러야 미션이 완료됩니다.
+            💡 목표 위치 100m 이내에서 5초간 머물러야 미션이 완료됩니다.
             범위를 벗어나면 시간이 초기화됩니다.
           </p>
         </div>

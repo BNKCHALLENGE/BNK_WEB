@@ -7,7 +7,7 @@ export const mockUser: User = {
   profileImageUrl: '/profile-placeholder.png',
   coinBalance: 28146,
   preferences: {
-    categories: ['food', 'cafe', 'tourist'],
+    categories: ['food', 'cafe', 'tour'],
     isOnboardingComplete: false,
   },
   acceptanceRate: 0.75,
@@ -99,8 +99,7 @@ export const mockAIRecommendedMissions: Mission[] = [
     endDate: '2025.12.15',
     insight: '최근 해당 챌린지에 대한 시민 관심도 65%가 증가했습니다.',
     verificationMethods: [
-      '위치 기반 인증 또는 현장 QR 코드 스캔',
-      '난이도별 배지 (예: 동백 새싹 배지) 지급'
+      '위치 기반 인증'
     ],
     coordinates: { lat: 35.0686, lng: 129.0208 },
   },
@@ -117,8 +116,7 @@ export const mockAIRecommendedMissions: Mission[] = [
     endDate: '2025.12.31',
     insight: '가족 단위 방문객이 최근 한 달간 45% 증가했습니다.',
     verificationMethods: [
-      '위치 기반 인증 또는 현장 QR 코드 스캔',
-      '입장권 인증샷 업로드',
+      '위치 기반 인증',
       '난이도별 배지 지급'
     ],
     coordinates: { lat: 35.1963, lng: 129.2133 },
@@ -136,8 +134,7 @@ export const mockAIRecommendedMissions: Mission[] = [
     endDate: '2025.12.20',
     insight: '외국인 관광객 방문율이 30% 증가했습니다.',
     verificationMethods: [
-      '위치 기반 인증',
-      '포토존 인증샷 업로드'
+      '위치 기반 인증'
     ],
     coordinates: { lat: 35.0975, lng: 129.0108 },
   },
@@ -154,8 +151,7 @@ export const mockAIRecommendedMissions: Mission[] = [
     endDate: '2025.11.30',
     insight: '주말 방문객이 평일 대비 200% 증가합니다.',
     verificationMethods: [
-      '위치 기반 인증',
-      '영수증 인증'
+      '위치 기반 인증'
     ],
     coordinates: { lat: 35.0967, lng: 129.0305 },
   },
@@ -172,8 +168,7 @@ export const mockAIRecommendedMissions: Mission[] = [
     endDate: '2025.12.25',
     insight: '일출 명소로 새해 방문객이 급증합니다.',
     verificationMethods: [
-      '위치 기반 인증 또는 현장 QR 코드 스캔',
-      '난이도별 배지 지급'
+      '위치 기반 인증'
     ],
     coordinates: { lat: 35.1884, lng: 129.2231 },
   },
@@ -194,9 +189,7 @@ export const mockAllMissions: Mission[] = [
     endDate: '2025.10.31',
     insight: '야구 시즌 기간 중 참여율이 120% 상승했습니다.',
     verificationMethods: [
-      '위치 기반 인증 또는 현장 QR 코드 스캔',
-      '경기 티켓 인증',
-      '난이도별 배지 (예: 동백 새싹 배지) 지급'
+      '위치 기반 인증'
     ],
     coordinates: { lat: 35.1939, lng: 129.0615 },
   },
@@ -213,8 +206,7 @@ export const mockAllMissions: Mission[] = [
     endDate: '2025.12.20',
     insight: '여름철 인기 미션 TOP 3에 선정되었습니다.',
     verificationMethods: [
-      '위치 기반 인증',
-      '해변 인증샷 업로드'
+      '위치 기반 인증'
     ],
     coordinates: { lat: 35.1586, lng: 129.1603 },
   },
@@ -231,8 +223,7 @@ export const mockAllMissions: Mission[] = [
     endDate: '2025.11.30',
     insight: '미식 카테고리에서 가장 많은 참여를 기록했습니다.',
     verificationMethods: [
-      '맛집 영수증 인증',
-      '음식 사진 업로드'
+      '위치 기반 인증'
     ],
     coordinates: { lat: 35.1531, lng: 129.1186 },
   },
@@ -249,8 +240,7 @@ export const mockAllMissions: Mission[] = [
     endDate: '2025.11.30',
     insight: '최근 해당 챌린지에 대한 시민 관심도 80%가 증가했습니다.',
     verificationMethods: [
-      '위치 기반 인증 또는 현장 QR 코드 스캔',
-      '난이도별 배지 (예: 동백 새싹 배지) 지급'
+      '위치 기반 인증'
     ],
     coordinates: { lat: 35.1531, lng: 129.1186 },
   },
@@ -267,8 +257,7 @@ export const mockAllMissions: Mission[] = [
     endDate: '2025.12.15',
     insight: '가을철 단풍 시즌에 방문객이 150% 증가합니다.',
     verificationMethods: [
-      '위치 기반 인증',
-      '트레킹 코스 완주 인증'
+      '위치 기반 인증'
     ],
     coordinates: { lat: 35.0519, lng: 129.0847 },
   },
@@ -285,7 +274,6 @@ export const mockAllMissions: Mission[] = [
     endDate: '2025.11.20',
     insight: '영화제 기간 중 참여율이 300% 상승합니다.',
     verificationMethods: [
-      '영화 티켓 인증',
       '위치 기반 인증'
     ],
     coordinates: { lat: 35.0987, lng: 129.0256 },
