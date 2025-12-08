@@ -516,3 +516,4 @@ GET /tabs
 | POST   | /missions/{id}/participate | 미션 참여하기         |
 | GET    | /tabs                      | 탭 목록 조회 (선택적) |
 
+

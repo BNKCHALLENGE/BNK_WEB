@@ -117,7 +117,7 @@ export default function MissionCard({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500 mb-1">
-                {mission.location} ({mission.distance})
+                {mission.distance}
               </p>
               <div className="flex items-center gap-1.5 text-sm font-semibold text-amber-600">
                 <CoinIcon />
@@ -170,7 +170,7 @@ export default function MissionCard({
           {mission.title}
         </h3>
         <p className="text-xs text-gray-500 mb-1 line-clamp-1">
-          {mission.location} ({mission.distance})
+          {mission.distance}
         </p>
         <div className="flex items-center gap-1 text-xs font-semibold text-amber-600 mt-auto">
           <CoinIcon />

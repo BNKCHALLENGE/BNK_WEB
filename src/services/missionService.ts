@@ -83,34 +83,11 @@ export async function getTabs(): Promise<TabItem[]> {
   }
 }
 
-// 카테고리 목록 조회
+// 카테고리 목록 조회 - 프론트엔드 고정 카테고리 사용
 export async function getCategories(): Promise<Category[]> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/categories`, {
-      headers: getAuthHeaders(),
-    });
-    
-    if (!response.ok) throw new Error('Failed to fetch categories');
-    
-    const result = await response.json();
-    const categories = extractArray<Category>(result.data || result);
-    
-    // 카테고리가 없거나 배열이 아니면 더미 사용
-    if (categories.length === 0) {
-      return mockCategories;
-    }
-    
-    // 'all' 카테고리가 없으면 추가
-    const hasAll = categories.some(c => c.name === 'all' || c.id === 'all');
-    if (!hasAll) {
-      return [{ id: 'cat-all', name: 'all', isActive: true }, ...categories];
-    }
-    
-    return categories;
-  } catch (error) {
-    console.warn('API 호출 실패, 더미 데이터 사용:', error);
-    return mockCategories;
-  }
+  // API 대신 프론트엔드에서 정의한 고정 카테고리 사용
+  // 카테고리: all, food, cafe, tourist, culture, festival, walk, shopping, self-dev, sports
+  return mockCategories;
 }
 
 // AI 추천 미션 목록 조회

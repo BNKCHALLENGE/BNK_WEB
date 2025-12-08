@@ -152,3 +152,4 @@ export function formatRemainingTime(progress: MissionProgress | null): string {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
+
