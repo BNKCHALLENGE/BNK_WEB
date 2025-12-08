@@ -55,12 +55,12 @@ export default function CoinCard({ coinBalance, onViewHistory }: CoinCardProps) 
           </button>
         </div>
 
-        {/* 결제 내역 버튼 */}
+        {/* 적립 내역 버튼 */}
         <button
           onClick={onViewHistory}
           className="px-5 py-2.5 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium hover:bg-white/30 transition-colors border border-white/30"
         >
-          결제 내역
+          적립 내역
         </button>
       </div>
     </div>

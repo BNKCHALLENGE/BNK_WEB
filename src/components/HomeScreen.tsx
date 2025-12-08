@@ -63,7 +63,7 @@ export default function HomeScreen({ user }: HomeScreenProps) {
           
           <div className="mb-6">
             <p className="text-3xl font-bold">
-              {user.coinBalance.toLocaleString()}
+              0
               <span className="text-lg font-normal ml-1">원</span>
             </p>
           </div>
