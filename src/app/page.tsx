@@ -405,11 +405,9 @@ export default function Home() {
   // 출석 체크 핸들러
   const handleCheckIn = async () => {
     try {
-      await checkIn();
-      alert("출석체크 완료! 🎉");
-      // 출석 정보 새로고침
-      const attendanceData = await getAttendanceInfo();
+      const attendanceData = await checkIn();
       setAttendanceInfo(attendanceData);
+      alert("출석체크 완료! 🎉");
     } catch (error) {
       console.error("출석체크 실패:", error);
     }

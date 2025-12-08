@@ -39,17 +39,9 @@ export const mockCategories: Category[] = [
 
 // 출석 체크 더미 데이터
 export const mockAttendance: AttendanceInfo = {
-  records: [
-    { date: '2025-12-01', attended: true },
-    { date: '2025-12-02', attended: true },
-    { date: '2025-12-03', attended: true },
-    { date: '2025-12-04', attended: true },
-    { date: '2025-12-05', attended: true },
-    { date: '2025-12-06', attended: true },
-    { date: '2025-12-07', attended: true },
-  ],
-  consecutiveDays: 7,
-  totalDays: 15,
+  records: [],
+  consecutiveDays: 0,
+  totalDays: 0,
 };
 
 // 진행중인 미션 더미 데이터
