@@ -15,6 +15,7 @@ import AttendanceCalendar from "@/components/AttendanceCalendar";
 import MissionTrackingOverlay from "@/components/MissionTrackingOverlay";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { useMissionTracking } from "@/hooks/useMissionTracking";
+import { useLocation } from "@/hooks/useLocation";
 import {
   getCurrentUser,
   getTabs,
@@ -43,6 +44,9 @@ export default function Home() {
   // 온보딩 상태
   const { isOnboardingComplete, completeOnboarding, skipOnboarding } =
     useOnboarding();
+
+  // 위치 정보
+  const { location, requestLocation } = useLocation();
 
   // 현재 활성 탭
   const [activeTab, setActiveTab] = useState<string>("tab-1"); // 홈이 기본
@@ -117,6 +121,9 @@ export default function Home() {
       try {
         setIsLoading(true);
 
+        // 위치 정보 요청
+        requestLocation();
+
         const [userData, tabsData] = await Promise.all([
           getCurrentUser(),
           getTabs(),
@@ -139,7 +146,7 @@ export default function Home() {
     };
 
     loadData();
-  }, []);
+  }, [requestLocation]);
 
   // 푸시 알림 이벤트 리스너
   useEffect(() => {
@@ -167,6 +174,10 @@ export default function Home() {
   const loadChallengeData = async () => {
     if (!user) return;
 
+    // 위치 정보 (없으면 undefined로 기본값 사용)
+    const lat = location?.latitude;
+    const lon = location?.longitude;
+
     try {
       const [
         categoriesData,
@@ -176,9 +187,9 @@ export default function Home() {
         attendanceData,
       ] = await Promise.all([
         getCategories(),
-        getAIRecommendedMissions(),
-        getAllMissions(),
-        getInProgressMissions(),
+        getAIRecommendedMissions(lat, lon),
+        getAllMissions(undefined, undefined, undefined, undefined, lat, lon),
+        getInProgressMissions(lat, lon),
         getAttendanceInfo(),
       ]);
 
@@ -217,8 +228,18 @@ export default function Home() {
   const handleCategoryChange = async (category: CategoryType) => {
     setSelectedCategory(category);
 
+    const lat = location?.latitude;
+    const lon = location?.longitude;
+
     try {
-      const missions = await getAllMissions(category);
+      const missions = await getAllMissions(
+        category,
+        undefined,
+        undefined,
+        undefined,
+        lat,
+        lon
+      );
       setAllMissions(missions);
     } catch (error) {
       console.error("미션 목록 로드 실패:", error);
@@ -227,8 +248,18 @@ export default function Home() {
 
   // 정렬 변경 핸들러
   const handleSortChange = async (sort: SortType) => {
+    const lat = location?.latitude;
+    const lon = location?.longitude;
+
     try {
-      const missions = await getAllMissions(selectedCategory, sort);
+      const missions = await getAllMissions(
+        selectedCategory,
+        sort,
+        undefined,
+        undefined,
+        lat,
+        lon
+      );
       setAllMissions(missions);
     } catch (error) {
       console.error("미션 목록 정렬 실패:", error);

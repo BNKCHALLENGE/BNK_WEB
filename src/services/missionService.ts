@@ -120,7 +120,9 @@ export async function getAllMissions(
   category?: CategoryType,
   sort?: SortType,
   page?: number,
-  limit?: number
+  limit?: number,
+  lat?: number,
+  lon?: number
 ): Promise<Mission[]> {
   try {
     const params = new URLSearchParams();
@@ -128,6 +130,9 @@ export async function getAllMissions(
     if (sort) params.append('sort', sort);
     if (page) params.append('page', page.toString());
     if (limit) params.append('limit', limit.toString());
+    // 위치 정보 추가 (거리 계산용)
+    params.append('lat', (lat ?? DEFAULT_LAT).toString());
+    params.append('lon', (lon ?? DEFAULT_LON).toString());
     
     const response = await fetch(`${API_BASE_URL}/missions?${params.toString()}`, {
       headers: getAuthHeaders(),
@@ -159,9 +164,15 @@ export async function getAllMissions(
 }
 
 // 진행중인 미션 목록 조회
-export async function getInProgressMissions(): Promise<Mission[]> {
+export async function getInProgressMissions(lat?: number, lon?: number): Promise<Mission[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/missions?status=in_progress`, {
+    const params = new URLSearchParams();
+    params.append('status', 'in_progress');
+    // 위치 정보 추가 (거리 계산용)
+    params.append('lat', (lat ?? DEFAULT_LAT).toString());
+    params.append('lon', (lon ?? DEFAULT_LON).toString());
+    
+    const response = await fetch(`${API_BASE_URL}/missions?${params.toString()}`, {
       headers: getAuthHeaders(),
     });
     
