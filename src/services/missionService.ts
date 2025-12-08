@@ -181,7 +181,12 @@ export async function getInProgressMissions(lat?: number, lon?: number): Promise
     const result = await response.json();
     const missions = extractArray<Mission>(result.data || result);
     
-    return missions;
+    // 프론트엔드에서 진행중인 미션만 필터링 (백엔드 필터 미작동 대비)
+    const inProgressMissions = missions.filter(
+      (m) => m.participationStatus === 'in_progress'
+    );
+    
+    return inProgressMissions;
   } catch (error) {
     console.warn('API 호출 실패, 더미 데이터 사용:', error);
     return mockInProgressMissions;
