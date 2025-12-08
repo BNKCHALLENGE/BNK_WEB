@@ -24,43 +24,43 @@ export interface Mission {
   finalScore?: number;
 }
 
-// API 카테고리 (백엔드 소문자)
+// API 카테고리 (백엔드와 동일)
 export type CategoryType = 
   | 'all'
   | 'food'
   | 'cafe'
-  | 'tourist'
+  | 'tour'
   | 'culture'
   | 'festival'
   | 'walk'
   | 'shopping'
-  | 'self-dev'
+  | 'study'
   | 'sports';
 
 // 카테고리 한글 매핑
 export const CategoryLabels: Record<CategoryType, string> = {
   'all': '전체',
-  'food': '음식',
+  'food': '맛집',
   'cafe': '카페',
-  'tourist': '관광',
+  'tour': '관광',
   'culture': '문화생활',
   'festival': '축제',
   'walk': '산책',
   'shopping': '쇼핑',
-  'self-dev': '자기개발',
+  'study': '자기개발',
   'sports': '스포츠',
 };
 
 // 온보딩용 카테고리 (all 제외)
 export const OnboardingCategories: { id: CategoryType; emoji: string; label: string }[] = [
-  { id: 'food', emoji: '🍳', label: '음식' },
+  { id: 'food', emoji: '🍳', label: '맛집' },
   { id: 'cafe', emoji: '☕', label: '카페' },
-  { id: 'tourist', emoji: '🏖️', label: '관광' },
+  { id: 'tour', emoji: '🏖️', label: '관광' },
   { id: 'culture', emoji: '🎭', label: '문화생활' },
   { id: 'festival', emoji: '🎊', label: '축제' },
   { id: 'walk', emoji: '🚶', label: '산책' },
   { id: 'shopping', emoji: '🛍️', label: '쇼핑' },
-  { id: 'self-dev', emoji: '📚', label: '자기개발' },
+  { id: 'study', emoji: '📚', label: '자기개발' },
   { id: 'sports', emoji: '⚾', label: '스포츠' },
 ];
 

@@ -23,17 +23,17 @@ export const mockTabs: TabItem[] = [
   { id: 'tab-5', name: '모아보기', isActive: false },
 ];
 
-// 카테고리 더미 데이터
+// 카테고리 더미 데이터 (백엔드와 동일)
 export const mockCategories: Category[] = [
   { id: 'cat-all', name: 'all', isActive: true },
   { id: 'cat-food', name: 'food', isActive: false },
   { id: 'cat-cafe', name: 'cafe', isActive: false },
-  { id: 'cat-tourist', name: 'tourist', isActive: false },
+  { id: 'cat-tour', name: 'tour', isActive: false },
   { id: 'cat-culture', name: 'culture', isActive: false },
   { id: 'cat-festival', name: 'festival', isActive: false },
   { id: 'cat-walk', name: 'walk', isActive: false },
   { id: 'cat-shopping', name: 'shopping', isActive: false },
-  { id: 'cat-self-dev', name: 'self-dev', isActive: false },
+  { id: 'cat-study', name: 'study', isActive: false },
   { id: 'cat-sports', name: 'sports', isActive: false },
 ];
 
@@ -94,7 +94,7 @@ export const mockAIRecommendedMissions: Mission[] = [
     locationDetail: '송도해상케이블카',
     distance: '18km',
     coinReward: 100,
-    category: 'tourist' as CategoryType,
+    category: 'tour' as CategoryType,
     isLiked: false,
     endDate: '2025.12.15',
     insight: '최근 해당 챌린지에 대한 시민 관심도 65%가 증가했습니다.',
@@ -112,7 +112,7 @@ export const mockAIRecommendedMissions: Mission[] = [
     locationDetail: '롯데월드 어드벤처 부산',
     distance: '12km',
     coinReward: 200,
-    category: 'tourist' as CategoryType,
+    category: 'tour' as CategoryType,
     isLiked: false,
     endDate: '2025.12.31',
     insight: '가족 단위 방문객이 최근 한 달간 45% 증가했습니다.',
@@ -131,7 +131,7 @@ export const mockAIRecommendedMissions: Mission[] = [
     locationDetail: '감천문화마을',
     distance: '15km',
     coinReward: 120,
-    category: 'tourist' as CategoryType,
+    category: 'tour' as CategoryType,
     isLiked: true,
     endDate: '2025.12.20',
     insight: '외국인 관광객 방문율이 30% 증가했습니다.',
@@ -167,7 +167,7 @@ export const mockAIRecommendedMissions: Mission[] = [
     locationDetail: '해동용궁사',
     distance: '20km',
     coinReward: 150,
-    category: 'tourist' as CategoryType,
+    category: 'tour' as CategoryType,
     isLiked: false,
     endDate: '2025.12.25',
     insight: '일출 명소로 새해 방문객이 급증합니다.',
@@ -208,7 +208,7 @@ export const mockAllMissions: Mission[] = [
     locationDetail: '해운대 해수욕장',
     distance: '8.2km',
     coinReward: 150,
-    category: 'tourist' as CategoryType,
+    category: 'tour' as CategoryType,
     isLiked: true,
     endDate: '2025.12.20',
     insight: '여름철 인기 미션 TOP 3에 선정되었습니다.',
