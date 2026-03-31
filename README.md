@@ -232,5 +232,5 @@ http://localhost:3000
 
 ## 🔗 Related projects
 
-- Backend API: [`../BNK_API`](../BNK_API)
-- ML recommendation service: [`../ML_API`](../ML_API)
+- Backend API: [`BNK_API`](https://github.com/BNKCHALLENGE/BNK_API)
+- ML recommendation service: [`ML_API`](https://github.com/BNKCHALLENGE/ML_API)
